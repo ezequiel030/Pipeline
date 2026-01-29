@@ -5,7 +5,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copiamos el archivo de la aplicación
-COPY app.py .
+COPY aplicacion.py .
 
 # Comando para ejecutar la aplicación de forma interactiva
 CMD ["python", "-u", "app.py"]
