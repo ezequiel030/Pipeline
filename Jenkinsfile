@@ -1,17 +1,33 @@
 pipeline {
     agent any
 
+    environment {
+        // Aqui llamamos a la herramienta que configuramos en el Paso 4
+        SCANNER_HOME = tool 'scanner-tool'
+    }
+
     stages {
-        stage('Construir') {
+        stage('Descargar Código') {
             steps {
-                // Comando para construir la imagen de Docker [cite: 264]
-                sh 'docker build -t fase2-jenkins .'
+                checkout scm
             }
         }
-        stage('Comprobar') {
+
+        stage('Análisis SonarQube') {
             steps {
-                // Mensaje de confirmación en el log de Jenkins [cite: 275]
-                echo 'La imagen se ha creado bien! Todo correcto.'
+                // Aqui llamamos al servidor del Paso 3
+                withSonarQubeEnv('sonar-server') {
+                    sh "${SCANNER_HOME}/bin/sonar-scanner"
+                }
+            }
+        }
+
+        stage('Construir Docker') {
+            steps {
+                script {
+                    // Tu comando de siempre para crear la imagen
+                    sh 'docker build -t python-app-fase3:latest .'
+                }
             }
         }
     }
